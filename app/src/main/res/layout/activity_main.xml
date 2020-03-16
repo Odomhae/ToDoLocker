@@ -35,7 +35,7 @@
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="44dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
@@ -49,49 +49,41 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="379dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="68dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintVertical_bias="0.224" />
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
 
     <Button
         android:id="@+id/addListButton"
         android:layout_width="109dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginBottom="8dp"
         android:text="할일 추가"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listView"
-        app:layout_constraintVertical_bias="0.738" />
+        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/deleteListButton"
         android:layout_width="164dp"
-        android:layout_height="59dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:text="delete"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listView"
-        app:layout_constraintVertical_bias="0.653" />
+        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/completeButton"
+        android:id="@+id/reloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:text="저장완료"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="44dp"
+        android:text="새로고침"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.552"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
 

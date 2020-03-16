@@ -10,31 +10,14 @@ import android.preference.SwitchPreference
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.ArrayAdapter
-import android.view.View
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.preference.PreferenceManager
-import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_to_do_locker.*
-import java.util.Arrays.asList
-import java.util.*
 import kotlin.collections.ArrayList
-import android.R.id.edit
-import android.content.SharedPreferences
-
+import org.json.JSONArray
+import org.json.JSONException
 
 
 class MainActivity : AppCompatActivity() {
 
     val fragment = MyPreferenceFragment()
-
-    // 정의하고
-    // 할일 리스트
-    val listDataPref by lazy { getSharedPreferences("listData", Context.MODE_PRIVATE) }
-    // 전체 리스트 갯수
-    val listCountPref by lazy { getSharedPreferences("listCount" , Context.MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,30 +28,31 @@ class MainActivity : AppCompatActivity() {
 
         // 빈 데이터 리스트 생성.
         val items = ArrayList<String>()
+
+        // 기존 데이터있으면 추가
+        val listPref =  getStringArrayPref("listData")
+        if(listPref.size > 0){
+           for (value in listPref)
+               items.add(value)
+        }
+
         items.add("오오도")
         items.add("오오d도")
 
         // ArrayAdapter 생성. 아이템 View를 선택(single choice)가능하도록 만듦.
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, items)
         listView.setAdapter(adapter)
-
+        adapter.notifyDataSetChanged()
 
         //할일 추가버튼
         addListButton.setOnClickListener {
             val count = adapter.count
             Log.d("갯수 : ", count.toString())
 
-            // 텍스트로 저장
+            // 텍스트 추가
             items.add(editText.text.toString())
-            // 키 + string
-            listDataPref.edit().putString(count.toString(), editText.text.toString()).apply()
-
-            // 리스트 갯수
-            // 가져와서
-            var listCount = listCountPref.getInt("listNumber", 0)
-            //++
-            listCount++
-            listCountPref.edit().putInt("listNumber", listCount).apply()
+            // 배열로 저장
+            setStringArrayPref("listData", items)
 
             editText.setText("")
             adapter.notifyDataSetChanged()
@@ -77,27 +61,59 @@ class MainActivity : AppCompatActivity() {
         // 할일 제거
         // 일단은 다 제거하는걸로
         deleteListButton.setOnClickListener {
-            val checked = listView.checkedItemPosition
             items.clear()
             adapter.notifyDataSetChanged()
-            // 숫자도 초기화
-            listCountPref.edit().clear().apply()
 
-            // 데이터도 초기화
-            listDataPref.edit().clear().apply()
+            // 배열로 저장
+            setStringArrayPref("listData", items)
         }
 
-        // 리스트 보내기
-        completeButton.setOnClickListener {
-            //val intent = Intent(this, ToDoLockerActivity::class.java)
-            val intent = Intent(this, ScreenOffReceiver::class.java)
-            intent.putStringArrayListExtra("list", items)
-            Log.d("111", "zzzzz")
-            startService(intent)
+        //새로고침
+        reloadButton.setOnClickListener {
+
+            adapter.notifyDataSetChanged()
 
         }
 
     }
+
+    // JSON 배열로 저장
+    fun setStringArrayPref(key: String, values: ArrayList<String>) {
+        val prefs = getSharedPreferences("SETTINGS", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        val a = JSONArray()
+        for (i in 0 until values.size) {
+            a.put(values[i])
+        }
+        if (!values.isEmpty()) {
+            editor.putString(key, a.toString())
+        } else {
+            editor.putString(key, null)
+        }
+        editor.apply()
+    }
+
+    // 저장된 배열 받아옴
+    fun getStringArrayPref(key: String): ArrayList<String> {
+        val prefs = getSharedPreferences("SETTINGS", Context.MODE_PRIVATE)
+        val json = prefs.getString(key, null)
+        val urls = ArrayList<String>()
+        if (json != null) {
+            try {
+                val a = JSONArray(json)
+                for (i in 0 until a.length()) {
+                    val url = a.optString(i)
+                    urls.add(url)
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+
+        }
+        return urls
+    }
+
+
 
     class MyPreferenceFragment : PreferenceFragment(){
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,6 +156,5 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
 
 }

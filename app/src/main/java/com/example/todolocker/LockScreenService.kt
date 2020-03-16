@@ -18,6 +18,9 @@ class LockScreenService :Service(){
     // 화면꺼질때 브로드케스트 msg 수신하는 리시버
     var receiver : ScreenOffReceiver? = null
 
+    private val ANDROID_CHANNEL_ID = "com.example.todolocker"
+    private val NOTIFICATION_ID = 9999
+
     override fun onCreate() {
         super.onCreate()
 
@@ -57,6 +60,7 @@ class LockScreenService :Service(){
 
     // 이놈 필수
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return null //To change body of created functions use File | Settings | File Templates.
+
     }
 }
