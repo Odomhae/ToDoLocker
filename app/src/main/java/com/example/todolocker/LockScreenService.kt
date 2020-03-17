@@ -48,6 +48,27 @@ class LockScreenService :Service(){
             }
         }
 
+        // 안드로이드 오레오 버전부터 백그라운드 제약이 잇어 포그라운드 서비스 실행
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            // Notification(상단알림) 채널 설정
+            val chan = NotificationChannel(ANDROID_CHANNEL_ID, "MyService", NotificationManager.IMPORTANCE_NONE)
+            chan.lightColor = Color.BLUE
+            chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+
+            // Notification 서비스 객체 가져옴
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(chan)
+
+            // Notification 알림 객체 설정
+            val builder = Notification.Builder(this, ANDROID_CHANNEL_ID)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText("SmartTracker Running")
+            val notification = builder.build()
+
+            // Notification 알림과 함께 포그라운드 서비스 시작
+            startForeground(NOTIFICATION_ID, notification)
+        }
+
         return Service.START_REDELIVER_INTENT
     }
 

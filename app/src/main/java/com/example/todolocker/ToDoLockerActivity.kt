@@ -25,7 +25,7 @@ class ToDoLockerActivity : AppCompatActivity() {
         Log.d("size : ", listPref.size.toString())
         // 아이디는 전체 리스트 갯수 중 하나로 랜덤으로 정함
         val id = Random().nextInt(listPref.size)
-        Log.d("아이디 id : ", id.toString())
+        Log.d("임의로 선택된 아이디 id : ", id.toString())
 
         Log.d("0번째  : ", listPref[0])
         Log.d("1번재 : ", listPref[1])
@@ -94,7 +94,7 @@ class ToDoLockerActivity : AppCompatActivity() {
                         listPref.removeAt(id)
 
                         // 결과 찍어보기
-                        Log.d("size : ", listPref.size.toString())
+                        Log.d("삭제된 후 size : ", listPref.size.toString())
                         if (listPref.size > 0) {
                             for (value in listPref) {
                                 Log.d("삭제후 listData 내용 : ", "Get json : $value")

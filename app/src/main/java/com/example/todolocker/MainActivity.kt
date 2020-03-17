@@ -17,6 +17,11 @@ import org.json.JSONException
 
 class MainActivity : AppCompatActivity() {
 
+    // 빈 데이터 리스트 생성.
+    val items = ArrayList<String>()
+
+    val adapter by lazy {  ArrayAdapter(this, android.R.layout.simple_list_item_1, items) }
+
     val fragment = MyPreferenceFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,21 +31,11 @@ class MainActivity : AppCompatActivity() {
         // frameLayout 부분에 frament 삽입
         fragmentManager.beginTransaction().replace(R.id.frameLayout, fragment).commit()
 
-        // 빈 데이터 리스트 생성.
-        val items = ArrayList<String>()
-
-        // 기존 데이터있으면 추가
-        val listPref =  getStringArrayPref("listData")
-        if(listPref.size > 0){
-           for (value in listPref)
-               items.add(value)
-        }
-
-        items.add("오오도")
-        items.add("오오d도")
+        // 새로운 스레드로 리스트 관리
+        val thread = ThreadClass()
+        thread.start()
 
         // ArrayAdapter 생성. 아이템 View를 선택(single choice)가능하도록 만듦.
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, items)
         listView.setAdapter(adapter)
         adapter.notifyDataSetChanged()
 
@@ -49,16 +44,10 @@ class MainActivity : AppCompatActivity() {
             val count = adapter.count
             Log.d("갯수 : ", count.toString())
 
-            // 텍스트 추가
-            items.add(editText.text.toString())
-            // 배열로 저장
-            setStringArrayPref("listData", items)
-
-            editText.setText("")
-            adapter.notifyDataSetChanged()
+            addList()
         }
 
-        // 할일 제거
+        // 할일 제거버튼
         // 일단은 다 제거하는걸로
         deleteListButton.setOnClickListener {
             items.clear()
@@ -68,14 +57,53 @@ class MainActivity : AppCompatActivity() {
             setStringArrayPref("listData", items)
         }
 
-        //새로고침
+        //새로고침 버튼
         reloadButton.setOnClickListener {
-
+            //삭제된게 반영된 배열을 불러와야하니까
+            // 기존에 있던 거 없애고
+            items.clear()
+            adapter.notifyDataSetChanged()
+            //  다시 채움
+            val listPref2 =  getStringArrayPref("listData")
+            if(listPref2.size > 0){
+                for (value in listPref2)
+                    items.add(value)
+            }
             adapter.notifyDataSetChanged()
 
         }
 
     }
+
+    // 리스트 관리 스레드
+    inner class ThreadClass: Thread (){
+        override fun run() {
+
+            // 기존 데이터있으면 추가
+            val listPref =  getStringArrayPref("listData")
+            if(listPref.size > 0){
+                for (value in listPref)
+                    items.add(value)
+            }
+
+            items.add("오오도")
+            items.add("오동도")
+
+        }
+    }
+
+    // 할일 추가버튼 함수
+    private fun addList(){
+
+        // 텍스트 추가
+        items.add(editText.text.toString())
+        // 배열로 저장
+        setStringArrayPref("listData", items)
+
+        editText.setText("")
+        adapter.notifyDataSetChanged()
+    }
+
 
     // JSON 배열로 저장
     fun setStringArrayPref(key: String, values: ArrayList<String>) {
