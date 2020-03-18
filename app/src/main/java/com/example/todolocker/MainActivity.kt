@@ -10,17 +10,19 @@ import android.preference.SwitchPreference
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.ArrayAdapter
+import android.widget.ListView
 import kotlin.collections.ArrayList
 import org.json.JSONArray
 import org.json.JSONException
+
 
 
 class MainActivity : AppCompatActivity() {
 
     // 빈 데이터 리스트 생성.
     val items = ArrayList<String>()
-
-    val adapter by lazy {  ArrayAdapter(this, android.R.layout.simple_list_item_1, items) }
+    //  하나의? 여려개 선택도 가능한게 나은데 // 이 가능한  adapter 설정
+    val adapter by lazy {  ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, items) }
 
     val fragment = MyPreferenceFragment()
 
@@ -36,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         thread.start()
 
         // ArrayAdapter 생성. 아이템 View를 선택(single choice)가능하도록 만듦.
-        listView.setAdapter(adapter)
-        adapter.notifyDataSetChanged()
+        listView.adapter = adapter
+        listView.choiceMode = ListView.CHOICE_MODE_MULTIPLE
 
         //할일 추가버튼
         addListButton.setOnClickListener {
@@ -47,9 +49,29 @@ class MainActivity : AppCompatActivity() {
             addList()
         }
 
-        // 할일 제거버튼
-        // 일단은 다 제거하는걸로
+        // 선택된 리스트만 삭제
         deleteListButton.setOnClickListener {
+            //선택된 아이템들
+            val checkedItems = listView.checkedItemPositions
+
+            for (i in adapter.count - 1 downTo 0) {
+                if (checkedItems.get(i)) {
+                    Log.d("선택된 아이템 삭제", i.toString())
+                    items.removeAt(i)
+                }
+            }
+            adapter.notifyDataSetChanged()
+
+
+            // 선택 초기화
+            listView.clearChoices()
+            // 배열로 저장
+            setStringArrayPref("listData", items)
+
+        }
+
+        // 리스트 다 삭제
+        clearListButton.setOnClickListener {
             items.clear()
             adapter.notifyDataSetChanged()
 
@@ -57,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             setStringArrayPref("listData", items)
         }
 
-        //새로고침 버튼
+        //새로고침
         reloadButton.setOnClickListener {
             //삭제된게 반영된 배열을 불러와야하니까
             // 기존에 있던 거 없애고
@@ -69,7 +91,10 @@ class MainActivity : AppCompatActivity() {
                 for (value in listPref2)
                     items.add(value)
             }
+
             adapter.notifyDataSetChanged()
+            // 선택 초기화
+            listView.clearChoices()
 
         }
 

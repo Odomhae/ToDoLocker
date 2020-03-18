@@ -8,22 +8,25 @@
 
     <ImageView
         android:id="@+id/rightImageView"
-        android:layout_width="86dp"
-        android:layout_height="108dp"
-        android:layout_marginEnd="29dp"
-        android:layout_marginBottom="44dp"
+        android:layout_width="113dp"
+        android:layout_height="75dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
+        android:adjustViewBounds="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/leftImageView"
         app:srcCompat="@drawable/ximage" />
 
     <ImageView
         android:id="@+id/leftImageView"
-        android:layout_width="86dp"
+        android:layout_width="wrap_content"
         android:layout_height="92dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="32dp"
+        android:adjustViewBounds="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/okayimage" />
@@ -31,17 +34,20 @@
     <SeekBar
         android:id="@+id/seekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="200dp"
-        android:layout_height="66dp"
-        android:layout_marginBottom="101dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
         android:max="100"
         android:progress="50"
         android:thumb="@drawable/slide"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/leftImageView"
         app:layout_constraintEnd_toStartOf="@+id/rightImageView"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/leftImageView"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="@+id/rightImageView"
+        app:layout_constraintStart_toEndOf="@+id/leftImageView" />
 
     <TextView
         android:id="@+id/textView"

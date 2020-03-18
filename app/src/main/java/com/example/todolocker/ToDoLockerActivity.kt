@@ -1,5 +1,6 @@
 package com.example.todolocker
 
+import android.app.KeyguardManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,8 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.Gravity
+import android.view.WindowManager
 import android.widget.Toast
 import java.util.Random
 import org.json.JSONException
@@ -19,6 +22,25 @@ class ToDoLockerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 기존 잠금화면보다 먼저 나타나도록
+        // 버전별로
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1){
+            // 잠금화면에서 보여지게
+            setShowWhenLocked(true)
+            // 기존 잠금화면 해제
+            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+            keyguardManager.requestDismissKeyguard(this, null)
+
+        }else{
+            // 잠금화면에서 보여지게
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+            // 기존 잠금화면 해제
+            window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
+        }
+
+        // 화면 계속 켜짐
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_to_do_locker)
 
         val listPref =  getStringArrayPref("listData")
@@ -81,8 +103,11 @@ class ToDoLockerActivity : AppCompatActivity() {
                             vibrator.vibrate(1000)
                         }
 
-                        Toast.makeText(applicationContext, "아따 오늘안엔 하자", Toast.LENGTH_SHORT).show()
                         //잠금해제
+                        val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
+                            toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
+                            toast.show()
+
                         finish()
                     }
 
@@ -105,6 +130,9 @@ class ToDoLockerActivity : AppCompatActivity() {
                         setStringArrayPref("listData", listPref)
 
                         // 잠금해제
+                        val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
+                        toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
+                        toast.show()
                         finish()
                     }
 
