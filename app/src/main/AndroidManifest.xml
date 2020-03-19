@@ -10,6 +10,8 @@
     <!-- 진동 서비스 사용 권한 요청 -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- 시스템에게 OpenGL ES 3.1이 필요하다는 것을 알려줍니다. -->
+    <uses-feature android:glEsVersion="0x00030001" android:required="true" />
 
     <application
         android:allowBackup="true"

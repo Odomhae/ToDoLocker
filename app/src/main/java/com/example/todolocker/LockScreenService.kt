@@ -12,7 +12,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 
-@Suppress("UNREACHABLE_CODE")
+
 class LockScreenService :Service(){
 
     // 화면꺼질때 브로드케스트 msg 수신하는 리시버
@@ -32,9 +32,10 @@ class LockScreenService :Service(){
         }
     }
 
+
     @SuppressLint("ObsoleteSdkInt")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId)
 
         if(intent != null){
             if(intent.action == null){
