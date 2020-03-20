@@ -10,12 +10,16 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.preference.Preference
+import android.preference.SwitchPreference
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
 import java.util.Random
 import org.json.JSONException
 import org.json.JSONArray
+import android.preference.PreferenceFragment
+
 
 
 class ToDoLockerActivity : AppCompatActivity() {
@@ -49,10 +53,10 @@ class ToDoLockerActivity : AppCompatActivity() {
         val id = Random().nextInt(listPref.size)
         Log.d("임의로 선택된 아이디 id : ", id.toString())
 
-        Log.d("0번째  : ", listPref[0])
-        Log.d("1번재 : ", listPref[1])
 
         if (listPref.size > 0) {
+            Log.d("0번째  : ", listPref[0])
+
             for (value in listPref) {
                 Log.d("listData 내용 : ", "할일 : $value")
             }
@@ -60,8 +64,7 @@ class ToDoLockerActivity : AppCompatActivity() {
 
         // 아이디에 해당하는 할일 가져옴
         Log.d("id에 해당하는 할일: ", listPref[id])
-        textView.setText(listPref[id])
-
+        textView.text = listPref[id]
 
         //seekBar 변경시 리스너
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -103,10 +106,10 @@ class ToDoLockerActivity : AppCompatActivity() {
                             vibrator.vibrate(1000)
                         }
 
-                        //잠금해제
+                       // 잠금헤제
                         val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
-                            toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
-                            toast.show()
+                        toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
+                        toast.show()
 
                         finish()
                     }
@@ -129,10 +132,22 @@ class ToDoLockerActivity : AppCompatActivity() {
                         // 설정화면에서도 사라지게 배열 저장
                         setStringArrayPref("listData", listPref)
 
-                        // 잠금해제
-                        val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
-                        toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
-                        toast.show()
+                        //잠금해제
+                        if(listPref.size == 0){
+                            val toast = Toast.makeText(applicationContext, "오늘의 할일 끝!", Toast.LENGTH_LONG)
+                            val view = toast.view
+                            view.setBackgroundResource(R.drawable.toast_background)
+                            toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
+                            toast.show()
+                        }
+
+                        // 할일 남았으면
+                        else{
+                            val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
+                            toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
+                            toast.show()
+                        }
+
                         finish()
                     }
 

@@ -46,14 +46,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.103" />
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="379dp"
-        android:layout_height="350dp"
-        android:layout_marginTop="68dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deleteListButton"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="-1dp">
+
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="379dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="68dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <Button
         android:id="@+id/addListButton"
@@ -62,14 +76,14 @@
         android:layout_marginStart="24dp"
         android:layout_marginBottom="8dp"
         android:text="Add item"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintTop_toBottomOf="@+id/editText"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <Button
         android:id="@+id/deleteListButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:text="Delete item"
         app:layout_constraintEnd_toStartOf="@+id/clearListButton"
         app:layout_constraintHorizontal_bias="0.644"
@@ -83,20 +97,8 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:text="Clear List"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintTop_toBottomOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/reloadButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="44dp"
-        android:text="새로고침"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

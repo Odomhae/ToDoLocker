@@ -79,8 +79,8 @@ class MainActivity : AppCompatActivity() {
             setStringArrayPref("listData", items)
         }
 
-        //새로고침
-        reloadButton.setOnClickListener {
+        // 당겨서 새로고침
+        pullToRefresh.setOnRefreshListener {
             //삭제된게 반영된 배열을 불러와야하니까
             // 기존에 있던 거 없애고
             items.clear()
@@ -96,9 +96,11 @@ class MainActivity : AppCompatActivity() {
             // 선택 초기화
             listView.clearChoices()
 
-        }
 
+            pullToRefresh.isRefreshing = false
+        }
     }
+
 
     // 리스트 관리 스레드
     inner class ThreadClass: Thread (){
