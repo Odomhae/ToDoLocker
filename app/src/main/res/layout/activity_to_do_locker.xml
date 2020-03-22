@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context=".ToDoLockerActivity">
 
     <ImageView
         android:id="@+id/rightImageView"
-        android:layout_width="113dp"
-        android:layout_height="75dp"
+        android:layout_width="wrap_content"
+        android:layout_height="92dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="32dp"
@@ -33,7 +34,7 @@
 
     <SeekBar
         android:id="@+id/seekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -42,7 +43,9 @@
         android:paddingEnd="0dp"
         android:max="100"
         android:progress="50"
+        android:progressDrawable="@drawable/progress"
         android:thumb="@drawable/slide"
+        android:maxHeight="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/leftImageView"
         app:layout_constraintEnd_toStartOf="@+id/rightImageView"
         app:layout_constraintHorizontal_bias="1.0"
@@ -53,12 +56,16 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="244dp"
-        android:layout_marginBottom="317dp"
-        android:text="했나"
-        android:textSize="42sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/memoimage"
+        android:gravity="center"
+        android:text="stuff "
+        android:textSize="42dp"
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.34" />
 </androidx.constraintlayout.widget.ConstraintLayout>
