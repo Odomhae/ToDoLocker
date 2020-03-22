@@ -10,15 +10,17 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.preference.Preference
-import android.preference.SwitchPreference
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
 import java.util.Random
 import org.json.JSONException
 import org.json.JSONArray
-import android.preference.PreferenceFragment
+import android.util.TypedValue
+import android.widget.TextView
+import android.view.ViewGroup
+
+
 
 
 
@@ -100,14 +102,17 @@ class ToDoLockerActivity : AppCompatActivity() {
                         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                         // SDk 버전에 따라
                         if(Build.VERSION.SDK_INT >= 26){
-                            // 2.0초동안 200의 세기로 진동
-                            vibrator.vibrate(VibrationEffect.createOneShot(2000, 200))
+                            // 0.5초동안 200의 세기로 진동
+                            vibrator.vibrate(VibrationEffect.createOneShot(500, 200))
                         }else{
                             vibrator.vibrate(1000)
                         }
 
                        // 잠금헤제
-                        val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
+                        val msg = resources.getString(R.string.remain_message)
+                        val remainMessage = msg +listPref.size.toString()
+                        Log.d("remain Msg", remainMessage)
+                        val toast = Toast.makeText(applicationContext, remainMessage, Toast.LENGTH_LONG)
                         toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
                         toast.show()
 
@@ -121,29 +126,36 @@ class ToDoLockerActivity : AppCompatActivity() {
                         // 삭제하고
                         listPref.removeAt(id)
 
+                        // 설정화면에서도 사라지게 배열 저장
+                        setStringArrayPref("listData", listPref)
+
                         // 결과 찍어보기
-                        Log.d("삭제된 후 size : ", listPref.size.toString())
                         if (listPref.size > 0) {
+                            Log.d("삭제된 후 size : ", listPref.size.toString())
                             for (value in listPref) {
                                 Log.d("삭제후 listData 내용 : ", "Get json : $value")
                             }
                         }
 
-                        // 설정화면에서도 사라지게 배열 저장
-                        setStringArrayPref("listData", listPref)
 
                         //잠금해제
                         if(listPref.size == 0){
-                            val toast = Toast.makeText(applicationContext, "오늘의 할일 끝!", Toast.LENGTH_LONG)
+                            val toast = Toast.makeText(applicationContext, R.string.all_done_message, Toast.LENGTH_LONG)
                             val view = toast.view
                             view.setBackgroundResource(R.drawable.toast_background)
+
+                            // 글자 크기 36f
+                            val group = toast.view as ViewGroup
+                            val msgTextView = group.getChildAt(0) as TextView
+                            msgTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36f)
+
                             toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
                             toast.show()
-                        }
-
-                        // 할일 남았으면
-                        else{
-                            val toast = Toast.makeText(applicationContext, "할일 ${listPref.size}개 남음", Toast.LENGTH_LONG)
+                        } else{
+                            val msg = resources.getString(R.string.remain_message)
+                            val remainMessage = msg +listPref.size.toString()
+                            Log.d("remain Msg", remainMessage)
+                            val toast = Toast.makeText(applicationContext, remainMessage, Toast.LENGTH_LONG)
                             toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
                             toast.show()
                         }
@@ -156,6 +168,7 @@ class ToDoLockerActivity : AppCompatActivity() {
             }
         })
     }
+
 
     // JSON 배열로 저장
     fun setStringArrayPref(key: String, values: ArrayList<String>) {

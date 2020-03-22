@@ -4,5 +4,5 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="useLockScreen"
-        android:title="앱 활성화" />
+        android:title="@string/app_activation" />
 </PreferenceScreen>

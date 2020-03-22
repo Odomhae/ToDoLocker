@@ -11,6 +11,7 @@ import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import kotlin.collections.ArrayList
 import org.json.JSONArray
 import org.json.JSONException
@@ -62,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             }
             adapter.notifyDataSetChanged()
 
-
             // 선택 초기화
             listView.clearChoices()
             // 배열로 저장
@@ -112,23 +112,26 @@ class MainActivity : AppCompatActivity() {
                 for (value in listPref)
                     items.add(value)
             }
-
-            items.add("오오도")
-            items.add("오동도")
-
         }
     }
 
     // 할일 추가버튼 함수
     private fun addList(){
 
-        // 텍스트 추가
-        items.add(editText.text.toString())
-        // 배열로 저장
-        setStringArrayPref("listData", items)
+        if(editText.text.isEmpty()){
+            Toast.makeText(applicationContext, R.string.empty_input_message, Toast.LENGTH_SHORT).show()
+        }
+        // 빈 입력 아니면 추가
+        else{
+            // 텍스트 추가
+            items.add(editText.text.toString())
+            // 배열로 저장
+            setStringArrayPref("listData", items)
 
-        editText.setText("")
-        adapter.notifyDataSetChanged()
+            editText.setText("")
+            adapter.notifyDataSetChanged()
+        }
+
     }
 
 

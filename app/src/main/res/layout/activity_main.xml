@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
-        android:text="할일 리스트 "
+        android:text="@string/to_do_list"
         android:textSize="32dp"
 
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +24,7 @@
         android:id="@+id/editText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="여기에 할일 입력"
+        android:hint="@string/enter_here"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="8dp"
-        android:text="Add item"
+        android:text="@string/add_item"
         app:layout_constraintTop_toBottomOf="@+id/editText"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -84,7 +84,7 @@
         android:id="@+id/deleteListButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete item"
+        android:text="@string/delete_item"
         app:layout_constraintEnd_toStartOf="@+id/clearListButton"
         app:layout_constraintHorizontal_bias="0.644"
         app:layout_constraintStart_toEndOf="@+id/addListButton"
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
-        android:text="Clear List"
+        android:text="@string/clear_list"
         app:layout_constraintTop_toBottomOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent" />
 

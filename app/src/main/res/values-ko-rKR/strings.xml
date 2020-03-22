@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">할 일 잠금화면</string>
+    <string name="app_activation">앱 활성화</string>
+    <string name="to_do_list">할 일 리스트</string>
+    <string name="add_item">추가</string>
+    <string name="clear_list">전체 삭제</string>
+    <string name="delete_item">삭제</string>
+    <string name="enter_here">여기에 입력</string>
+    <string name="all_done_message">할 일 끝!!</string>
+    <string name="remain_message">"남은 개수 :  "</string>
+    <string name="empty_input_message">빈 입력입니다</string>
+
+</resources>

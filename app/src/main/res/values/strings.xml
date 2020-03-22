@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">toDoLocker</string>
+    <string name="app_activation">App Activation</string>
+    <string name="to_do_list">To do List</string>
+    <string name="enter_here">Enter here</string>
+    <string name="add_item">Add Item</string>
+    <string name="delete_item">Delete Item</string>
+    <string name="clear_list">Clear List</string>
+    <string name="all_done_message">All Done!!</string>
+    <string name="remain_message">"Remain :  "</string>
+    <string name="empty_input_message">Empty input</string>
 </resources>
