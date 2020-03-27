@@ -9,4 +9,11 @@
     <string name="all_done_message">All Done!!</string>
     <string name="remain_message">"Remain :  "</string>
     <string name="empty_input_message">Empty input</string>
+    <string name="app_running_message">App is Running</string>
+    <string name="wrong_input_message">Wrong input</string>
+    <string name="deadline_set_message">Deadline has been set</string>
+    <string name="input_time_format">Hour : Minute</string>
+    <string name="deadline_time">Deadline</string>
+    <string name="no_item_message">Nothing to do</string>
+    <string name="one_hour_left_message">1 hour left until deadline</string>
 </resources>

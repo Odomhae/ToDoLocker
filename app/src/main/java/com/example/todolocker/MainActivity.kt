@@ -1,24 +1,50 @@
 package com.example.todolocker
 
+
+import android.annotation.SuppressLint
+import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
+import android.os.SystemClock
+import android.preference.ListPreference
 import android.preference.PreferenceFragment
+import android.preference.PreferenceManager
 import android.preference.SwitchPreference
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlin.collections.ArrayList
 import org.json.JSONArray
 import org.json.JSONException
-
+import java.lang.reflect.Array.set
+import java.sql.Time
+import java.text.DateFormat
+import java.text.Format
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.time.hours
+import kotlin.time.minutes
 
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var context: Context
+    lateinit var alarmManager: AlarmManager
 
     // 빈 데이터 리스트 생성.
     val items = ArrayList<String>()
@@ -37,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         // 새로운 스레드로 리스트 관리
         val thread = ThreadClass()
         thread.start()
+
 
         // ArrayAdapter 생성. 아이템 View를 선택(single choice)가능하도록 만듦.
         listView.adapter = adapter
@@ -98,6 +125,154 @@ class MainActivity : AppCompatActivity() {
 
 
             pullToRefresh.isRefreshing = false
+        }
+    }
+
+
+    // 마감시간 설정
+    fun getDeadlineTime() : Array<Int>{
+        var returnTime = Array(2, {0})
+
+        // 입력한 시간, 분
+        var inputHour = ""
+        var inputMinute = ""
+
+        // : 기준으로 문자열 나눔
+        val array = deadlineTimeButton.text.split(":")
+
+        //시간만 입력한경우
+        // 분은 0으로 설정
+        if(array.size == 1){
+            inputHour = array[0]
+            inputMinute = "0"
+        }
+        // 너무 길게 입력한 경우
+        // 다시 입력
+        else if(array.size >2){
+            Toast.makeText(applicationContext, R.string.wrong_input_message, Toast.LENGTH_SHORT).show()
+            deadlineTimeButton.setText("")
+        }
+        else{
+            inputHour = array[0]
+            inputMinute = array[1]
+
+            Log.d("시간, : 기준 앞", inputHour)
+            Log.d("분, : 기준 뒤", inputMinute)
+        }
+
+        // 입력한 시간, 분 숫자로
+        val hh = inputHour.toInt()
+        val mm = inputMinute.toInt()
+
+        // 24이상이거나 60이상이면 다시 입력받음
+        if(hh >= 0 && hh <=23 && mm >=0 && mm <=59 ){
+            Log.d("입력한 시간", hh.toString())
+            Log.d("입력한 분", mm.toString())
+
+            returnTime[0] = hh
+            returnTime[1] = mm
+
+        }else{
+            Toast.makeText(applicationContext, R.string.wrong_input_message, Toast.LENGTH_SHORT).show()
+            deadlineTimeButton.setText("")
+
+        }
+
+        return  returnTime
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    override fun onStart() {
+        super.onStart()
+
+        // 마감시간 설정
+        deadlineTimeButton.setOnClickListener {
+
+            Log.d("선택한 시간 ", deadlineTimeButton.text.toString())
+
+            /// 알림 세팅
+            context = this
+            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            val intent = Intent(context, Receiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+            // 오늘 날짜 가져와서
+            val todayDate = Date().date.toString()
+            val todayMonth = (Date().month +1).toString()
+            val todayYear = (Date().year +1900).toString()
+            val fin = "$todayDate/$todayMonth/$todayYear"
+            Log.d("fin", fin)
+
+            //var date = Date()
+            val formatter =  SimpleDateFormat("dd/MM/yyyy");
+            val date = formatter.parse(fin)
+
+            Log.d("오늘 날짜를 밀리세컨으로 ", date?.time.toString())
+            Log.d("현 시간을 밀리세컨으로 ", System.currentTimeMillis().toString())
+
+            // 설정한 시간만큼 더해줘야한다.
+            val getDeadlineTime = getDeadlineTime()
+            val hour = getDeadlineTime[0] * 1000 *3600 // 시간
+            val minute = getDeadlineTime[1] * 1000 * 60 // 분
+
+            val deadlineTime = date.time + hour + minute
+            Log.d("설정한 시간을 밀리세컨으로 ", deadlineTime.toString())
+
+
+            val listPref =  getStringArrayPref("listData")
+            // 할일이 없으면
+            if(listPref.size == 0){
+                Toast.makeText(applicationContext, R.string.no_item_message, Toast.LENGTH_SHORT).show()
+                deadlineTimeButton.setText("")
+            }
+            // 못한게 있으면 한시간 전에 알람
+            else if(listPref.size > 0) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, (deadlineTime - (1000 * 3600)), pendingIntent)
+                Toast.makeText(applicationContext, R.string.deadline_set_message, Toast.LENGTH_SHORT).show()
+            }
+
+
+        }
+    }
+
+    class Receiver : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+
+            Log.d("알림 나타나는 시간 ", "Receiver "+ Date().toString())
+            Toast.makeText(context, "eeeee", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(context, alarmNotification::class.java)
+            context?.startService(intent)
+        }
+    }
+
+    class alarmNotification : Service(){
+        override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+
+            val builder = NotificationCompat.Builder(this)
+            builder.setSmallIcon(R.drawable.okayimage)
+                .setAutoCancel(true)
+                .setStyle(NotificationCompat.InboxStyle().addLine(getString(R.string.one_hour_left_message)))
+                //.setContentTitle("항릴ㅇ ㅇㄹㄴㄹ")
+
+          val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                val NOTIFICAITON_ID = "NOTIFICATION_CHAN"
+                val chan = NotificationChannel(NOTIFICAITON_ID, "ttt", NotificationManager.IMPORTANCE_DEFAULT)
+                notificationManager.createNotificationChannel(chan)
+                builder.setChannelId(NOTIFICAITON_ID)
+            }
+            notificationManager.notify(111, builder.build()) // 111 == channel id
+
+            return START_NOT_STICKY
+        }
+
+        override fun onBind(intent: Intent?): IBinder? {
+
+            return null
         }
     }
 
@@ -172,7 +347,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     class MyPreferenceFragment : PreferenceFragment(){
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -190,6 +364,7 @@ class MainActivity : AppCompatActivity() {
                     // 퀴즈 잠금화면 사용이 체크된 경우 lockScreenService 실행
                     useLockScreenPref.isChecked ->{
                         Log.d("앱 사용여부", "체크됨")
+
                         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                             activity.startForegroundService(Intent(activity, LockScreenService::class.java))
                         }else{
