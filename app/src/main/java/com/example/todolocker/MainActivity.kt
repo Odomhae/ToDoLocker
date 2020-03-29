@@ -6,14 +6,9 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.IBinder
-import android.os.SystemClock
-import android.preference.ListPreference
 import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
 import android.preference.SwitchPreference
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
@@ -21,24 +16,12 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlin.collections.ArrayList
 import org.json.JSONArray
 import org.json.JSONException
-import java.lang.reflect.Array.set
-import java.sql.Time
-import java.text.DateFormat
-import java.text.Format
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.time.hours
-import kotlin.time.minutes
+import android.provider.AlarmClock
 
 
 class MainActivity : AppCompatActivity() {
@@ -131,14 +114,14 @@ class MainActivity : AppCompatActivity() {
 
     // 마감시간 설정
     fun getDeadlineTime() : Array<Int>{
-        var returnTime = Array(2, {0})
+        var returnTime = Array(2, {-1})
 
         // 입력한 시간, 분
         var inputHour = ""
         var inputMinute = ""
 
         // : 기준으로 문자열 나눔
-        val array = deadlineTimeButton.text.split(":")
+        val array = deadlineTimeEditText.text.split(":")
 
         //시간만 입력한경우
         // 분은 0으로 설정
@@ -149,8 +132,8 @@ class MainActivity : AppCompatActivity() {
         // 너무 길게 입력한 경우
         // 다시 입력
         else if(array.size >2){
-            Toast.makeText(applicationContext, R.string.wrong_input_message, Toast.LENGTH_SHORT).show()
-            deadlineTimeButton.setText("")
+            Toast.makeText(applicationContext, R.string.invalid_time_message, Toast.LENGTH_SHORT).show()
+            deadlineTimeEditText.setText("")
         }
         else{
             inputHour = array[0]
@@ -171,14 +154,9 @@ class MainActivity : AppCompatActivity() {
 
             returnTime[0] = hh
             returnTime[1] = mm
-
-        }else{
-            Toast.makeText(applicationContext, R.string.wrong_input_message, Toast.LENGTH_SHORT).show()
-            deadlineTimeButton.setText("")
-
         }
 
-        return  returnTime
+        return  returnTime // 올바른 시간 , 분을 반환해야 한다
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -186,9 +164,9 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
 
         // 마감시간 설정
-        deadlineTimeButton.setOnClickListener {
+        setDeadlineButton.setOnClickListener {
 
-            Log.d("선택한 시간 ", deadlineTimeButton.text.toString())
+            Log.d("선택한 시간 ", deadlineTimeEditText.text.toString())
 
             /// 알림 세팅
             context = this
@@ -202,36 +180,39 @@ class MainActivity : AppCompatActivity() {
             val todayMonth = (Date().month +1).toString()
             val todayYear = (Date().year +1900).toString()
             val fin = "$todayDate/$todayMonth/$todayYear"
-            Log.d("fin", fin)
+            Log.d("오늘 날짜 ", fin)
 
-            //var date = Date()
             val formatter =  SimpleDateFormat("dd/MM/yyyy");
             val date = formatter.parse(fin)
 
             Log.d("오늘 날짜를 밀리세컨으로 ", date?.time.toString())
-            Log.d("현 시간을 밀리세컨으로 ", System.currentTimeMillis().toString())
 
             // 설정한 시간만큼 더해줘야한다.
             val getDeadlineTime = getDeadlineTime()
+
+            if(getDeadlineTime[0] ==-1 || getDeadlineTime[1] ==-1){
+                Toast.makeText(applicationContext, R.string.invalid_time_message, Toast.LENGTH_SHORT).show()
+                deadlineTimeEditText.setText("")
+                return@setOnClickListener
+            }
+
             val hour = getDeadlineTime[0] * 1000 *3600 // 시간
             val minute = getDeadlineTime[1] * 1000 * 60 // 분
 
             val deadlineTime = date.time + hour + minute
             Log.d("설정한 시간을 밀리세컨으로 ", deadlineTime.toString())
 
-
             val listPref =  getStringArrayPref("listData")
             // 할일이 없으면
             if(listPref.size == 0){
                 Toast.makeText(applicationContext, R.string.no_item_message, Toast.LENGTH_SHORT).show()
-                deadlineTimeButton.setText("")
+                deadlineTimeEditText.setText("")
             }
-            // 못한게 있으면 한시간 전에 알람
+            // 못한게 있으면 한시간 전에 알림 & 해당 시간에 알람
             else if(listPref.size > 0) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, (deadlineTime - (1000 * 3600)), pendingIntent)
                 Toast.makeText(applicationContext, R.string.deadline_set_message, Toast.LENGTH_SHORT).show()
             }
-
 
         }
     }
@@ -240,8 +221,6 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
             Log.d("알림 나타나는 시간 ", "Receiver "+ Date().toString())
-            Toast.makeText(context, "eeeee", Toast.LENGTH_SHORT).show()
-
             val intent = Intent(context, alarmNotification::class.java)
             context?.startService(intent)
         }
@@ -250,28 +229,38 @@ class MainActivity : AppCompatActivity() {
     class alarmNotification : Service(){
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
+            val pm = getSystemService(POWER_SERVICE) as PowerManager
+            val wLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE, "todolocker:TAG")
+            wLock.acquire(3000)
+            wLock.release()
 
+            Log.d("222", "되노 안되노 ")
             val builder = NotificationCompat.Builder(this)
+
             builder.setSmallIcon(R.drawable.okayimage)
                 .setAutoCancel(true)
-                .setStyle(NotificationCompat.InboxStyle().addLine(getString(R.string.one_hour_left_message)))
-                //.setContentTitle("항릴ㅇ ㅇㄹㄴㄹ")
+                .setSmallIcon(R.drawable.okayimage)
+                //.setVibrate(longArrayOf(1L, 2L))
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.one_hour_left_message))
 
-          val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                 val NOTIFICAITON_ID = "NOTIFICATION_CHAN"
-                val chan = NotificationChannel(NOTIFICAITON_ID, "ttt", NotificationManager.IMPORTANCE_DEFAULT)
+                val chan = NotificationChannel(NOTIFICAITON_ID, "ttt", NotificationManager.IMPORTANCE_HIGH)
                 notificationManager.createNotificationChannel(chan)
                 builder.setChannelId(NOTIFICAITON_ID)
+
             }
-            notificationManager.notify(111, builder.build()) // 111 == channel id
+
+            notificationManager.notify(11, builder.build()) // 11 == channel id
 
             return START_NOT_STICKY
         }
 
-        override fun onBind(intent: Intent?): IBinder? {
 
+        override fun onBind(intent: Intent?): IBinder? {
             return null
         }
     }
