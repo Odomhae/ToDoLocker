@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.004"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deadlineTimeButton" />
+        app:layout_constraintTop_toBottomOf="@id/deadlineTimeEditText" />
 
     <EditText
         android:id="@+id/editText"
@@ -101,12 +101,11 @@
 
 
     <EditText
-        android:id="@+id/deadlineTimeButton"
+        android:id="@+id/deadlineTimeEditText"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="44dp"
         android:ems="10"
         android:gravity="center"
         android:hint="@string/input_time_format"
@@ -115,16 +114,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
-    <TextView
-        android:id="@+id/textView3"
+    <Button
+        android:id="@+id/setDeadlineButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="52dp"
-        android:gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
         android:text="@string/deadline_time"
-        android:textSize="30dp"
-        app:layout_constraintEnd_toStartOf="@+id/deadlineTimeButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
 

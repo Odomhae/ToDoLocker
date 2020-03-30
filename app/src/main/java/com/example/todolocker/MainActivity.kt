@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
     // 마감시간 설정
     fun getDeadlineTime() : Array<Int>{
-        var returnTime = Array(2, {-1})
+        var returnTime =  Array(2, {-1})
 
         // 입력한 시간, 분
         var inputHour = ""
@@ -189,6 +189,8 @@ class MainActivity : AppCompatActivity() {
 
             // 설정한 시간만큼 더해줘야한다.
             val getDeadlineTime = getDeadlineTime()
+            var hour = getDeadlineTime[0]  // 시간
+            var minute = getDeadlineTime[1]  // 분
 
             if(getDeadlineTime[0] ==-1 || getDeadlineTime[1] ==-1){
                 Toast.makeText(applicationContext, R.string.invalid_time_message, Toast.LENGTH_SHORT).show()
@@ -196,8 +198,15 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val hour = getDeadlineTime[0] * 1000 *3600 // 시간
-            val minute = getDeadlineTime[1] * 1000 * 60 // 분
+            // 마감시간이 00시면 23시로
+            if(getDeadlineTime[0] == 0)
+                hour = 23
+            // 마감시간 숫자가 현재시간 숫자보다 작으면 다음날로 넘겨야됨
+            if(getDeadlineTime[0] < Date().hours)
+                hour = 24 + getDeadlineTime[0]
+
+            hour *= 1000 *3600 // 시간
+            minute *= 1000 * 60 // 분
 
             val deadlineTime = date.time + hour + minute
             Log.d("설정한 시간을 밀리세컨으로 ", deadlineTime.toString())
@@ -208,9 +217,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, R.string.no_item_message, Toast.LENGTH_SHORT).show()
                 deadlineTimeEditText.setText("")
             }
-            // 못한게 있으면 한시간 전에 알림 & 해당 시간에 알람
+            // 못한게 있으면 한시간 전에 알림
             else if(listPref.size > 0) {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, (deadlineTime - (1000 * 3600)), pendingIntent)
+
                 Toast.makeText(applicationContext, R.string.deadline_set_message, Toast.LENGTH_SHORT).show()
             }
 
@@ -229,12 +239,13 @@ class MainActivity : AppCompatActivity() {
     class alarmNotification : Service(){
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
+            // 꺼진 화면 켜고
             val pm = getSystemService(POWER_SERVICE) as PowerManager
-            val wLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE, "todolocker:TAG")
+            var wLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE, "todolocker:TAG")
             wLock.acquire(3000)
             wLock.release()
 
-            Log.d("222", "되노 안되노 ")
+            Log.d("222", "알림")
             val builder = NotificationCompat.Builder(this)
 
             builder.setSmallIcon(R.drawable.okayimage)
@@ -258,6 +269,8 @@ class MainActivity : AppCompatActivity() {
 
             return START_NOT_STICKY
         }
+
+
 
 
         override fun onBind(intent: Intent?): IBinder? {
@@ -297,7 +310,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
 
     // JSON 배열로 저장
     fun setStringArrayPref(key: String, values: ArrayList<String>) {
