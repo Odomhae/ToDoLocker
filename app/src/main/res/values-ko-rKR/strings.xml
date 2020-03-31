@@ -13,9 +13,9 @@
     <string name="wrong_input_message">잘못된 입력입니다</string>
     <string name="deadline_set_message">마감 시간 설정됨</string>
     <string name="input_time_format">시간 : 분</string>
-    <string name="deadline_time">마감 시간</string>
     <string name="no_item_message">할 일이 없습니다</string>
     <string name="one_hour_left_message">마감 시간까지 1 시간 남음</string>
     <string name="invalid_time_message">잘못된 시간입니다</string>
+    <string name="set_deadline_button">"마감시간 설정 "</string>
 
 </resources>

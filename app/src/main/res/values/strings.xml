@@ -13,7 +13,7 @@
     <string name="invalid_time_message">Invalid Time</string>
     <string name="deadline_set_message">Deadline has been set</string>
     <string name="input_time_format">Hour : Minute</string>
-    <string name="deadline_time">Deadline</string>
+    <string name="set_deadline_button">Set Deadline</string>
     <string name="no_item_message">Nothing to do</string>
     <string name="one_hour_left_message">1 hour left until deadline</string>
 </resources>

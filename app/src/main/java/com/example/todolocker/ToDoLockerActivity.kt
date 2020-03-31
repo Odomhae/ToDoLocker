@@ -1,15 +1,21 @@
 package com.example.todolocker
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.KeyguardManager
+import android.app.PendingIntent.getActivity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.SeekBar
 import kotlinx.android.synthetic.main.activity_to_do_locker.*
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.provider.AlarmClock
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
@@ -19,10 +25,6 @@ import org.json.JSONArray
 import android.util.TypedValue
 import android.widget.TextView
 import android.view.ViewGroup
-
-
-
-
 
 class ToDoLockerActivity : AppCompatActivity() {
 
@@ -68,6 +70,7 @@ class ToDoLockerActivity : AppCompatActivity() {
         Log.d("id에 해당하는 할일: ", listPref[id])
         textView.text = listPref[id]
 
+
         //seekBar 변경시 리스너
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -93,6 +96,7 @@ class ToDoLockerActivity : AppCompatActivity() {
             }
 
             // 터지 조작 다 끝낸 경우
+           // @SuppressLint("ResourceAsColor")
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 val progress = seekBar?.progress ?: 50 // 널값을 허용하지 않는 변수에 널 값이 들어 갔을때 50으로
 
@@ -140,14 +144,16 @@ class ToDoLockerActivity : AppCompatActivity() {
 
                         //잠금해제
                         if(listPref.size == 0){
+                            // 배경은 toast_background
                             val toast = Toast.makeText(applicationContext, R.string.all_done_message, Toast.LENGTH_LONG)
                             val view = toast.view
                             view.setBackgroundResource(R.drawable.toast_background)
 
-                            // 글자 크기 36f
+                            // 글자 크기 36f, 글자색 white
                             val group = toast.view as ViewGroup
                             val msgTextView = group.getChildAt(0) as TextView
                             msgTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 36f)
+                            msgTextView.setTextColor(resources.getColor(R.color.colorWhite))
 
                             toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
                             toast.show()
@@ -185,6 +191,7 @@ class ToDoLockerActivity : AppCompatActivity() {
         }
         editor.apply()
     }
+
 
     // 저장된 배열 받아옴
     fun getStringArrayPref(key: String): ArrayList<String> {
